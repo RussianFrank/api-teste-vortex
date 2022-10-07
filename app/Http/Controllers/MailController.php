@@ -25,4 +25,9 @@ class MailController extends Controller
             'data' => $createEmail ? 'Email entrou na fila e será disparado em breve!' : 'falha no disparo',
         ]);
     }
+
+    public function historic()
+    {
+        $user = auth()->user();
+    }
 }

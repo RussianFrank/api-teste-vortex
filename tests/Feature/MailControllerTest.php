@@ -149,7 +149,6 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
-        
     }
 
     /**

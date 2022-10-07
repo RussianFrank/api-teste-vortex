@@ -19,4 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/agendar', [MailController::class, 'schedule']);
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'email',
+], function ($router) {
+    Route::post('/autenticar', [AuthController::class, 'login']);
+    Route::post('/registrar', [AuthController::class, 'register']);
+    Route::post('/agendar', [MailController::class, 'schedule']);
+    Route::get('/hitorico', [MailController::class, 'historic']);
+});

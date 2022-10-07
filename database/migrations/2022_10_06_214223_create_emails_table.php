@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('emails', function (Blueprint $table) {
             $table->id();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('name');
             $table->string('email');
             $table->string('subject');
