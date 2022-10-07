@@ -15,7 +15,7 @@ class MailService
             'email' => $emailRequest['email'],
             'subject' => $emailRequest['assunto'],
             'body' => $emailRequest['corpo_email'],
-            'schedule' => $emailRequest['agendar'],
+            'schedule' => isset($emailRequest['agendar']) ? $emailRequest['agendar'] : now(),
         ]);
     }
 }

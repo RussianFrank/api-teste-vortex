@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\ProcessEmailJob;
 use App\Models\Email;
+use Carbon\Carbon;
 
 class EmailObserver
 {
@@ -16,7 +17,7 @@ class EmailObserver
     public function created(Email $email)
     {
         ProcessEmailJob::dispatch($email)
-            ->delay($email->schedule);
+            ->delay(now()->diffInSeconds($email->schedule));
     }
 
     /**

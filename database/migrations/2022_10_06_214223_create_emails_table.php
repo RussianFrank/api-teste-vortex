@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('subject');
             $table->text('body');
-            $table->timestamp('schedule');
+            $table->timestamp('schedule')->nullable();
             $table->boolean('is_sent')->default(false);
             $table->timestamps();
 
