@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ScheduleRequest;
 use App\Services\MailService;
+use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
@@ -17,8 +18,10 @@ class MailController extends Controller
     public function schedule(ScheduleRequest $request)
     {
         $createEmail = $this->mailService->create(
-            $request->validated()
+            $request->validated(),
+            $request->user()->id
         );
+
 
         return response()->json([
             'success' => $createEmail ? true : false,
@@ -26,8 +29,8 @@ class MailController extends Controller
         ]);
     }
 
-    public function historic()
+    public function historic(Request $request)
     {
-        $user = auth()->user();
+        return $request->user->email;
     }
 }

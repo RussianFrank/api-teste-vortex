@@ -2,14 +2,27 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class MailControllerTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
+
+    public User $user;
+    public string $token;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+        $this->token = JWTAuth::fromUser($this->user);
+    }
 
     /**
      * A basic feature test example.
@@ -26,7 +39,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('nome');
@@ -54,7 +67,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('nome');
@@ -82,7 +95,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('email');
@@ -110,7 +123,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('email');
@@ -138,7 +151,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('assunto');
@@ -165,7 +178,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('assunto');
@@ -193,7 +206,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('corpo_email');
@@ -221,7 +234,7 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('corpo_email');
@@ -249,7 +262,7 @@ class MailControllerTest extends TestCase
             'agendar' => 'data inválida',
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrorFor('agendar');
@@ -268,9 +281,9 @@ class MailControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_success_when_is_sent_to_schedule_method()
+    public function test_success_when_user_is_logged_and_sent_to_schedule_method()
     {
-        $payload = [
+        $payloadSchedule = [
             'nome' => $this->faker->name,
             'email' => $this->faker->email,
             'assunto' => $this->faker->sentence,
@@ -278,16 +291,17 @@ class MailControllerTest extends TestCase
             'agendar' => $this->faker->date('Y-m-d H:i:s'),
         ];
 
-        $response = $this->post('/api/agendar', $payload);
+        $response = $this->withToken($this->token)->post(route('v1.email.agendar'), $payloadSchedule);
 
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('emails', [
-            'name' => $payload['nome'],
-            'email' => $payload['email'],
-            'subject' => $payload['assunto'],
-            'body' => $payload['corpo_email'],
-            'schedule' => $payload['agendar'],
+            'name' => $payloadSchedule['nome'],
+            'user_id' => $this->user->id,
+            'email' => $payloadSchedule['email'],
+            'subject' => $payloadSchedule['assunto'],
+            'body' => $payloadSchedule['corpo_email'],
+            'schedule' => $payloadSchedule['agendar'],
         ]);
     }
 }

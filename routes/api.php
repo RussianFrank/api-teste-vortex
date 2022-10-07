@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,16 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::prefix('v1')->name('v1.')->middleware('api')->group(function () {
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'email',
-], function ($router) {
-    Route::post('/autenticar', [AuthController::class, 'login']);
-    Route::post('/registrar', [AuthController::class, 'register']);
-    Route::post('/agendar', [MailController::class, 'schedule']);
-    Route::get('/hitorico', [MailController::class, 'historic']);
+    Route::prefix('auth')->name('auth.')->middleware('auth:api')->group(function () {
+        Route::post('/autenticar', [AuthController::class, 'login'])->name('autenticar')->withoutMiddleware('auth:api');
+    });
+    
+    Route::prefix('email')->name('email.')->middleware('auth:api')->group(function () {
+        Route::post('/agendar', [MailController::class, 'schedule'])->name('agendar');
+        Route::get('/hitorico', [MailController::class, 'historic'])->name('hitorico');
+    });
+    
 });

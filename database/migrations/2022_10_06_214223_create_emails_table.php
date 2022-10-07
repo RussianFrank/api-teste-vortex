@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('emails', function (Blueprint $table) {
             $table->id();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->bigInteger('user_id')->unsigned();
             $table->string('name');
             $table->string('email');
             $table->string('subject');
@@ -23,6 +23,8 @@ return new class extends Migration
             $table->timestamp('schedule');
             $table->boolean('is_sent')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
