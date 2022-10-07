@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\BaseEmail;
 use App\Models\Email;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class ProcessEmailJob implements ShouldQueue
 {
@@ -34,6 +36,6 @@ class ProcessEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        //
+        Mail::to($this->email->email)->send(new BaseEmail($this->email));
     }
 }
