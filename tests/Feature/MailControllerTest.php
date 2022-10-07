@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ProcessEmailJob;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -19,6 +22,8 @@ class MailControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Queue::fake();
 
         $this->user = User::factory()->create();
         $this->token = JWTAuth::fromUser($this->user);
@@ -51,6 +56,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -78,6 +85,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -107,6 +116,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -134,6 +145,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -162,6 +175,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -189,6 +204,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -218,6 +235,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -245,6 +264,8 @@ class MailControllerTest extends TestCase
             'subject' => $payload['assunto'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -274,6 +295,8 @@ class MailControllerTest extends TestCase
             'body' => $payload['corpo_email'],
             'schedule' => $payload['agendar'],
         ]);
+
+        Queue::assertNotPushed(ProcessEmailJob::class);
     }
 
     /**
@@ -295,6 +318,11 @@ class MailControllerTest extends TestCase
 
         $response->assertStatus(200);
 
+        $response->assertExactJson([
+            'success' =>  true,
+            'data' => 'Email entrou na fila e será disparado em breve!'
+        ]);
+
         $this->assertDatabaseHas('emails', [
             'name' => $payloadSchedule['nome'],
             'user_id' => $this->user->id,
@@ -303,5 +331,17 @@ class MailControllerTest extends TestCase
             'body' => $payloadSchedule['corpo_email'],
             'schedule' => $payloadSchedule['agendar'],
         ]);
+
+        Queue::assertPushed(ProcessEmailJob::class);
+
+        Queue::assertPushed(function (ProcessEmailJob $job) use ($payloadSchedule){
+            return $job->email->email === $payloadSchedule['email']
+                && $job->email->user_id === $this->user->id
+                && $job->email->name === $payloadSchedule['nome']
+                && $job->email->subject === $payloadSchedule['assunto']
+                && $job->email->body === $payloadSchedule['corpo_email']
+                && $job->email->schedule === $payloadSchedule['agendar'];
+        });
+
     }
 }

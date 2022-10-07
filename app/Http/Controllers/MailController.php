@@ -22,7 +22,6 @@ class MailController extends Controller
             $request->user()->id
         );
 
-
         return response()->json([
             'success' => $createEmail ? true : false,
             'data' => $createEmail ? 'Email entrou na fila e será disparado em breve!' : 'falha no disparo',

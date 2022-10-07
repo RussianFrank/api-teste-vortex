@@ -18,18 +18,34 @@ class AuthControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_success_create_user_and_auth_in_login_route()
+    public function test_success_create_user_and_auth_with_token_in_login_route()
     {
         $user = User::factory()->create();
-        $token = JWTAuth::fromUser($user);
 
         $payload = [
             'email' => $user->email,
             'password' => 'password'
         ];
 
-        $response = $this->withToken($token)->post(route('v1.auth.autenticar'), $payload);
+        $response = $this->post(route('v1.auth.autenticar'), $payload);
 
         $response->assertStatus(200);
+    }
+
+        /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_fails_when_user_send_not_valid_auth_credentials_to_login_route()
+    {
+        $payload = [
+            'email' => 'email@invalido.com',
+            'password' => 'senha-invalida'
+        ];
+
+        $response = $this->post(route('v1.auth.autenticar'), $payload);
+
+        $response->assertStatus(401);
     }
 }
