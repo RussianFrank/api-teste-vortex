@@ -22,7 +22,7 @@ mecanismo de job/filas
   php artisan migrate
   php artisan jwt:secret
 ```
-#### Após rodar o comando do jwt, pegue o token gerado e insira no .env `JWT_SECRET`  
+#### Após rodar o comando do jwt, pegue o token gerado e insira no .env `JWT_SECRET`, caso já não esteja lá
 
 #### Gerar usuário de teste
 
