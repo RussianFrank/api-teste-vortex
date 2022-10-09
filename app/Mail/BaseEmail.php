@@ -30,7 +30,7 @@ class BaseEmail extends Mailable
      */
     public function build()
     {
-        return $this->from('recrutamento@meumei.com.br')
+        return $this->from(env('MAIL_FROM_ADDRESS'))
             ->subject($this->email->subject)
             ->view('template-email', ['email' => $this->email]);
     }
