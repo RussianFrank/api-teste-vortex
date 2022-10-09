@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ScheduleRequest;
 use App\Services\MailService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
@@ -15,7 +16,11 @@ class MailController extends Controller
         $this->mailService = $mailService;
     }
 
-    public function schedule(ScheduleRequest $request)
+    /**
+     * @param  ScheduleRequest  $request
+     * @return JsonResponse
+     */
+    public function schedule(ScheduleRequest $request): JsonResponse
     {
         $createEmail = $this->mailService->create(
             $request->validated(),
@@ -28,11 +33,15 @@ class MailController extends Controller
         ]);
     }
 
-    public function historic(Request $request)
+    /**
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function historic(Request $request): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data' => $request->user()->historic,
+            'data' => $request->user()->historic()->paginate(10),
         ]);
     }
 }

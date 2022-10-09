@@ -6,7 +6,6 @@ use App\Jobs\ProcessEmailJob;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -17,6 +16,7 @@ class MailControllerTest extends TestCase
     use WithFaker;
 
     public User $user;
+
     public string $token;
 
     protected function setUp(): void
@@ -319,8 +319,8 @@ class MailControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertExactJson([
-            'success' =>  true,
-            'data' => 'Email entrou na fila e será disparado em breve!'
+            'success' => true,
+            'data' => 'Email entrou na fila e será disparado em breve!',
         ]);
 
         $this->assertDatabaseHas('emails', [
@@ -334,7 +334,7 @@ class MailControllerTest extends TestCase
 
         Queue::assertPushed(ProcessEmailJob::class);
 
-        Queue::assertPushed(function (ProcessEmailJob $job) use ($payloadSchedule){
+        Queue::assertPushed(function (ProcessEmailJob $job) use ($payloadSchedule) {
             return $job->email->email === $payloadSchedule['email']
                 && $job->email->user_id === $this->user->id
                 && $job->email->name === $payloadSchedule['nome']
@@ -342,7 +342,6 @@ class MailControllerTest extends TestCase
                 && $job->email->body === $payloadSchedule['corpo_email']
                 && $job->email->schedule === $payloadSchedule['agendar'];
         });
-
     }
 
     /**
@@ -352,15 +351,8 @@ class MailControllerTest extends TestCase
      */
     public function test_success_when_user_is_logged_and_sent_to_historic_method()
     {
-
         $response = $this->withToken($this->token)->get(route('v1.email.historico'));
 
         $response->assertStatus(200);
-
-        $response->assertExactJson([
-            'success' =>  true,
-            'data' => $this->user->historic
-        ]);
-
     }
 }

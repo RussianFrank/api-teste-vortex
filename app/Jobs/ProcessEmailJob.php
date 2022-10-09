@@ -6,13 +6,11 @@ use App\Mail\BaseEmail;
 use App\Models\Email;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-
 
 class ProcessEmailJob implements ShouldQueue
 {
@@ -23,7 +21,7 @@ class ProcessEmailJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Email $email
+     * @param  Email  $email
      * @return void
      */
     public function __construct(Email $email)
@@ -45,6 +43,5 @@ class ProcessEmailJob implements ShouldQueue
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
-        
     }
 }

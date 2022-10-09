@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Jobs\ProcessEmailJob;
 use App\Models\Email;
-use Carbon\Carbon;
 
 class EmailObserver
 {

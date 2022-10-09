@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthControllerTest extends TestCase
 {
@@ -24,7 +23,7 @@ class AuthControllerTest extends TestCase
 
         $payload = [
             'email' => $user->email,
-            'password' => 'password'
+            'password' => 'password',
         ];
 
         $response = $this->post(route('v1.auth.autenticar'), $payload);
@@ -32,7 +31,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-        /**
+    /**
      * A basic feature test example.
      *
      * @return void
@@ -41,7 +40,7 @@ class AuthControllerTest extends TestCase
     {
         $payload = [
             'email' => 'email@invalido.com',
-            'password' => 'senha-invalida'
+            'password' => 'senha-invalida',
         ];
 
         $response = $this->post(route('v1.auth.autenticar'), $payload);

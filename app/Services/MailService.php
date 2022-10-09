@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Email;
-use App\Models\User;
 
 class MailService
 {

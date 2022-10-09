@@ -18,6 +18,7 @@ class EmailFactory extends Factory
     public function definition()
     {
         $user = User::factory()->create();
+
         return [
             'name' => fake()->name(),
             'user_id' => $user->id,

@@ -11,7 +11,6 @@ use Tests\TestCase;
 
 class ProcessEmailJobTest extends TestCase
 {
-
     use RefreshDatabase;
     use WithFaker;
 
@@ -25,12 +24,12 @@ class ProcessEmailJobTest extends TestCase
         Mail::fake();
 
         $email = Email::factory()->create([
-            'schedule' => null
+            'schedule' => null,
         ]);
 
         Mail::assertSent(BaseEmail::class);
 
-        Mail::assertSent(function (BaseEmail $emailSent) use ($email){
+        Mail::assertSent(function (BaseEmail $emailSent) use ($email) {
             return $emailSent->email->email === $email->email
                 && $emailSent->email->user_id === $email->user_id
                 && $emailSent->email->name === $email->name
@@ -44,5 +43,4 @@ class ProcessEmailJobTest extends TestCase
             'is_sent' => 1,
         ]);
     }
-
 }
