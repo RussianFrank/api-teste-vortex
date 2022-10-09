@@ -24,7 +24,7 @@ Route::prefix('v1')->name('v1.')->middleware('api')->group(function () {
     
     Route::prefix('email')->name('email.')->middleware('auth:api')->group(function () {
         Route::post('/agendar', [MailController::class, 'schedule'])->name('agendar');
-        Route::get('/hitorico', [MailController::class, 'historic'])->name('hitorico');
+        Route::get('/historico', [MailController::class, 'historic'])->name('historico');
     });
     
 });

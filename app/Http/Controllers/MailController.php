@@ -30,6 +30,9 @@ class MailController extends Controller
 
     public function historic(Request $request)
     {
-        return $request->user->email;
+        return response()->json([
+            'success' => true,
+            'data' => $request->user()->historic,
+        ]);
     }
 }

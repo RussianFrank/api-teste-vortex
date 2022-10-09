@@ -61,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function email()
+    public function historic()
     {
         return $this->hasMany(Email::class);
     }

@@ -344,4 +344,23 @@ class MailControllerTest extends TestCase
         });
 
     }
+
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_success_when_user_is_logged_and_sent_to_historic_method()
+    {
+
+        $response = $this->withToken($this->token)->get(route('v1.email.historico'));
+
+        $response->assertStatus(200);
+
+        $response->assertExactJson([
+            'success' =>  true,
+            'data' => $this->user->historic
+        ]);
+
+    }
 }
